@@ -67,7 +67,7 @@ Setting up a *public key infrastructure* (PKI) is out of reach for many small te
 - [Short-lived certificates](https://smallstep.com/blog/passive-revocation.html) with automated enrollment, renewal, and passive revocation
 - Can operate as [an online intermediate CA for an existing root CA](https://smallstep.com/docs/tutorials/intermediate-ca-new-ca)
 - [Badger, BoltDB, Postgres, and MySQL database backends](https://smallstep.com/docs/step-ca/configuration#databases)
-
+## TODO Aurora and RDS 
 ### ⚙️ Many ways to automate
 
 There are several ways to authorize a request with the CA and establish a chain of trust that suits your flow.
