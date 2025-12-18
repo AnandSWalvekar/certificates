@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: step-db
+    restart: always
+    environment:
+      POSTGRES_USER: step_user
+      POSTGRES_PASSWORD: step_password
+      POSTGRES_DB: step_ca_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - step-pki
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U step_user -d step_ca_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ca:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: step-ca
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      DOCKER_STEPCA_INIT_NAME: "Cisco"
+      DOCKER_STEPCA_INIT_DNS_NAMES: "localhost,$(hostname -f)"
+      DOCKER_STEPCA_INIT_PROVISIONER_NAME: "admin"
+      DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT: true
+    volumes:
+      - step_data:/home/step
+    networks:
+      - step-pki
+
+networks:
+  step-pki:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  step_data:
+
